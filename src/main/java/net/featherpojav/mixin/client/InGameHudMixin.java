@@ -42,7 +42,7 @@ public class InGameHudMixin {
     }
 
     @Inject(method = "renderScoreboardSidebar", at = @At("HEAD"), cancellable = true)
-    private void onRenderScoreboardSidebar(DrawContext context, ScoreboardObjective objective, CallbackInfo ci) {
+    private void onRenderScoreboardSidebar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         if (!FeatherConfig.INSTANCE.scoreboard) {
             ci.cancel();
         }
