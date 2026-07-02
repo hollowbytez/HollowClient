@@ -3,7 +3,9 @@ package net.featherpojav.client.gui;
 import net.fabricmc.loader.api.FabricLoader;
 import net.featherpojav.client.config.FeatherConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FeatherHomeScreen extends Screen {
+    public static final CubeMapRenderer CUSTOM_PANORAMA = new CubeMapRenderer(Identifier.of("featherpojav", "background/panorama"));
+    private final RotatingCubeMapRenderer panoramaRenderer = new RotatingCubeMapRenderer(CUSTOM_PANORAMA);
+
     private final List<MenuButton> buttons = new ArrayList<>();
     private final List<IconWidget> topIcons = new ArrayList<>();
 
@@ -104,12 +109,11 @@ public class FeatherHomeScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Draw the custom starry night background image
-        Identifier backgroundId = Identifier.of("featherpojav", "background.png");
-        context.drawTexture(backgroundId, 0, 0, 0.0f, 0.0f, this.width, this.height, this.width, this.height);
+        // Render 3D rotating custom panorama
+        this.panoramaRenderer.render(context, this.width, this.height, 1.0f, delta);
 
-        // Dark grey atmospheric overlay for visual contrast
-        context.fill(0, 0, this.width, this.height, 0x80101012);
+        // Dark grey atmospheric overlay for visual contrast (D0 is 80% opacity)
+        context.fill(0, 0, this.width, this.height, 0xD0101012);
 
         // --- Render Center Header & Brand ---
         int centerY = this.height / 2 - 110;
