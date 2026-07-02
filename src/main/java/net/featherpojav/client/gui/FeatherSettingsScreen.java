@@ -16,6 +16,7 @@ public class FeatherSettingsScreen extends Screen {
     private final Screen parent;
     private Category currentCategory = Category.ALL;
     private final List<ModCard> cards = new ArrayList<>();
+    private TextFieldWidget searchField;
     
     // Geometry
     private int boxWidth = 420;
@@ -69,6 +70,18 @@ public class FeatherSettingsScreen extends Screen {
         boxHeight = Math.min(250, this.height - 20);
         boxX = this.width / 2 - boxWidth / 2;
         boxY = this.height / 2 - boxHeight / 2;
+
+        int searchX = boxX + 200;
+        int searchY = boxY + 6;
+        int searchW = boxWidth - 235;
+        int searchH = 12;
+        this.searchField = new TextFieldWidget(this.textRenderer, searchX, searchY, searchW, searchH, Text.of("Search"));
+        this.searchField.setMaxLength(30);
+        this.searchField.setDrawsBackground(false);
+        this.searchField.setPlaceholder(Text.of("Search..."));
+        this.searchField.setEditableColor(0xFFFFFFFF);
+        this.searchField.setUneditableColor(0xFF888888);
+        this.addSelectableChild(this.searchField);
 
         cards.clear();
         FeatherConfig cfg = FeatherConfig.INSTANCE;
@@ -130,12 +143,12 @@ public class FeatherSettingsScreen extends Screen {
     }
 
     private List<ModCard> getFilteredCards() {
-        if (currentCategory == Category.ALL) {
-            return cards;
-        }
+        String query = this.searchField != null ? this.searchField.getText().toLowerCase().trim() : "";
         List<ModCard> list = new ArrayList<>();
         for (ModCard c : cards) {
-            if (c.category == currentCategory) {
+            boolean matchesCategory = (currentCategory == Category.ALL || c.category == currentCategory);
+            boolean matchesSearch = query.isEmpty() || c.name.toLowerCase().contains(query);
+            if (matchesCategory && matchesSearch) {
                 list.add(c);
             }
         }
@@ -184,6 +197,23 @@ public class FeatherSettingsScreen extends Screen {
         boolean closeHovered = mouseX >= boxX + boxWidth - 20 && mouseX <= boxX + boxWidth - 5 && mouseY >= topBarY && mouseY <= topBarY + 20;
         context.drawText(this.textRenderer, "X", boxX + boxWidth - 16, topBarY + 7, closeHovered ? 0xFFE53935 : 0xFF888888, false);
 
+        // --- Render Search Box ---
+        if (this.searchField != null) {
+            int sX = this.searchField.getX();
+            int sY = this.searchField.getY();
+            int sW = this.searchField.getWidth();
+            int sH = this.searchField.getHeight();
+            
+            context.fill(sX - 4, sY - 3, sX + sW + 4, sY + sH + 3, 0xFF18181A);
+            context.drawBorder(sX - 4, sY - 3, sW + 8, sH + 6, this.searchField.isFocused() ? 0xFF9C27B0 : 0x20FFFFFF);
+            
+            // Render text field
+            this.searchField.render(context, mouseX, mouseY, delta);
+            
+            // Draw search icon "🔍" inside the box on the right
+            context.drawText(this.textRenderer, "🔍", sX + sW - 10, sY, 0xFF888888, false);
+        }
+
         // --- Render Sub-Tabs (All, PvP, HUD, New) ---
         int subTabY = boxY + 30;
         int tabX = boxX + 10;
@@ -198,6 +228,14 @@ public class FeatherSettingsScreen extends Screen {
             
             tabX += textW + 6;
         }
+
+        // --- Render HUD Layout Button ---
+        int hudBtnWidth = 80;
+        int hudBtnX = boxX + boxWidth - hudBtnWidth - 10;
+        boolean hudHovered = mouseX >= hudBtnX && mouseX <= hudBtnX + hudBtnWidth && mouseY >= subTabY && mouseY <= subTabY + 16;
+        context.fill(hudBtnX, subTabY, hudBtnX + hudBtnWidth, subTabY + 16, hudHovered ? 0xFF2A2A2E : 0x409C27B0);
+        context.drawBorder(hudBtnX, subTabY, hudBtnWidth, 16, hudHovered ? 0xFFBA68C8 : 0xFF9C27B0);
+        context.drawCenteredTextWithShadow(this.textRenderer, "📐 HUD Layout", hudBtnX + hudBtnWidth / 2, subTabY + 4, hudHovered ? 0xFFFFFFFF : 0xFFE1BEE7);
 
         // --- Render Grid of Mod Cards ---
         int cardAreaY = boxY + 54;
@@ -277,6 +315,16 @@ public class FeatherSettingsScreen extends Screen {
             return true;
         }
 
+        // Handle search field focus
+        if (this.searchField != null) {
+            boolean clicked = mouseX >= this.searchField.getX() - 4 && mouseX <= this.searchField.getX() + this.searchField.getWidth() + 4
+                           && mouseY >= this.searchField.getY() - 2 && mouseY <= this.searchField.getY() + this.searchField.getHeight() + 2;
+            this.searchField.setFocused(clicked);
+            if (clicked && button == 1) { // Right click to clear
+                this.searchField.setText("");
+            }
+        }
+
         // Handle Sub-Tabs Clicks
         int subTabY = boxY + 30;
         int tabX = boxX + 10;
@@ -288,6 +336,16 @@ public class FeatherSettingsScreen extends Screen {
                 return true;
             }
             tabX += textW + 6;
+        }
+
+        // Handle HUD Layout button click
+        int hudBtnWidth = 80;
+        int hudBtnX = boxX + boxWidth - hudBtnWidth - 10;
+        if (mouseX >= hudBtnX && mouseX <= hudBtnX + hudBtnWidth && mouseY >= subTabY && mouseY <= subTabY + 16) {
+            if (this.client != null) {
+                this.client.setScreen(new net.featherpojav.client.gui.FeatherHudEditorScreen(this));
+            }
+            return true;
         }
 
         // Handle Cards interaction
@@ -343,6 +401,25 @@ public class FeatherSettingsScreen extends Screen {
             this.client.setScreen(parent);
         }
     }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.searchField != null && this.searchField.keyPressed(keyCode, scanCode, modifiers)) {
+            scrollY = 0;
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (this.searchField != null && this.searchField.charTyped(chr, modifiers)) {
+            scrollY = 0;
+            return true;
+        }
+        return super.charTyped(chr, modifiers);
+    }
+
 }
 
 // ==========================================
