@@ -1,0 +1,11 @@
+{
+  "category.hollowclient": "Hollow Client",
+  "key.hollowclient.settings": "Open Mod Settings Menu",
+  "key.hollowclient.hud_editor": "Open HUD Editor",
+  "key.hollowclient.zoom": "Zoom Key",
+  "key.hollowclient.freelook": "Freelook Key",
+  "key.hollowclient.stopwatch": "Toggle Stopwatch",
+  "key.hollowclient.autotext": "Execute Auto Text Macro",
+  "key.hollowclient.togglesprint": "Toggle Sprint Mode"
+}
+

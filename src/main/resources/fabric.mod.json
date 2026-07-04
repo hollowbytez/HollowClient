@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "featherpojav",
+	"id": "hollowclient",
 	"version": "${version}",
 	"name": "HollowClient",
 	"description": "HollowClient - A premium PvP client for Minecraft 1.21.1.",
@@ -8,19 +8,19 @@
 		"HollowBytez"
 	],
 	"contact": {
-		"homepage": "https://github.com/HollowBytez/featherpojav"
+		"homepage": "https://github.com/HollowBytez/HollowClient"
 	},
 	"license": "MIT",
-	"icon": "assets/featherpojav/icon.png",
+	"icon": "assets/hollowclient/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"client": [
-			"net.featherpojav.client.FeatherPojavModClient"
+			"net.hollowclient.client.HollowClient"
 		]
 	},
 	"mixins": [
 		{
-			"config": "featherpojav.client.mixins.json",
+			"config": "hollowclient.mixins.json",
 			"environment": "client"
 		}
 	],

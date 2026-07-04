@@ -81,4 +81,28 @@ publishing {
 	}
 }
 
+// Automatically copy the compiled JAR to the user's mod folders
+tasks.register('copyToModsFolder', Copy) {
+    dependsOn build
+    from "${buildDir}/libs"
+    include "hollowclient-${project.version}.jar"
+    exclude "*-sources.jar"
+    
+    // Default Minecraft mods folder
+    into System.getenv("APPDATA") + "/.minecraft/mods/"
+    
+    doLast {
+        // SKLauncher instance mods folder
+        copy {
+            from "${buildDir}/libs"
+            include "hollowclient-${project.version}.jar"
+            exclude "*-sources.jar"
+            into System.getenv("APPDATA") + "/.sklauncher/instances/new-keys-juggle/mods/"
+        }
+        println("✅ Automatically pushed the latest Mod JAR to your mods folders!")
+    }
+}
+
+// Tie the copy task to run automatically whenever 'build' is executed
+build.finalizedBy(copyToModsFolder)
 

@@ -1,0 +1,32 @@
+{
+	"required": true,
+	"package": "net.hollowclient.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"MinecraftClientMixin",
+		"InGameHudMixin",
+		"GameRendererMixin",
+		"HeldItemRendererMixin",
+		"KeyboardMixin",
+		"ItemEntityRendererMixin",
+		"MouseMixin",
+		"CameraMixin",
+		"WorldMixin",
+		"SessionMixin",
+		"BossBarHudMixin",
+		"LightmapTextureManagerMixin",
+		"LightmapTextureManagerAccessor",
+		"InGameOverlayRendererMixin",
+		"ClientPlayerInteractionManagerMixin",
+		"GameMenuScreenMixin",
+		"ScreenMixin",
+		"WorldRendererMixin",
+		"PlayerEntityRendererMixin",
+		"LivingEntityRendererAccessor",
+		"SplashOverlayMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
+
