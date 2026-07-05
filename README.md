@@ -6,6 +6,7 @@
   **Premium. Minimalist. Uncompromising.**
   
   [![Download Client](https://img.shields.io/badge/Download-hollowclient--1.0.0.jar-FF1A55?style=for-the-badge&logo=minecraft&logoColor=white)](./hollowclient-1.0.0.jar)
+  [![Source Code](https://img.shields.io/badge/Source_Code-HollowClient--Source-purple?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hollowbytez/HollowClient-Source)
 
   <br/>
 </div>
